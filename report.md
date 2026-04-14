@@ -1,7 +1,7 @@
 # CSE 5306 Project 3 Report — Consensus Algorithms: 2PC and Raft
 
 **Course:** CSE 5306 — Distributed Systems  
-**GitHub:** *(insert your GitHub link here)*
+**GitHub:** *([insert your GitHub link here](https://github.com/030108ming/CSE-5306-Project-3))*
 
 ---
 
@@ -16,7 +16,7 @@
 
 ## Base Implementation
 
-We extended our own Project 2 implementation: a distributed drone telemetry system (Python + gRPC + Docker Compose). The consensus modules (2PC and Raft) are added as independent Docker Compose profiles (`twopc` and `raft`) so the original telemetry system remains unchanged.
+We extended Project 2 implementation: a distributed drone telemetry system (Python + gRPC + Docker Compose). The consensus modules (2PC and Raft) are added as independent Docker Compose profiles (`twopc` and `raft`) so the original telemetry system remains unchanged.
 
 ---
 
