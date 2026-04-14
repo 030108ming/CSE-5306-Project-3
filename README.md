@@ -8,7 +8,7 @@
 **GitHub:** *([insert your GitHub link here](https://github.com/030108ming/CSE-5306-Project-3))*
 ---
 
-## Overview
+## Overview 
 
 This repository extends the Project 2 drone telemetry system with two consensus algorithm implementations:
 
