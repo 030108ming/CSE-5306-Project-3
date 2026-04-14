@@ -1,0 +1,68 @@
+syntax = "proto3";
+
+package twopc;
+
+message TransactionRequest {
+  string transaction_id = 1;
+  string operation = 2;
+}
+
+message VoteRequestMessage {
+  string transaction_id = 1;
+  string operation = 2;
+  string coordinator_id = 3;
+}
+
+message VoteReply {
+  string transaction_id = 1;
+  string participant_id = 2;
+  bool vote_commit = 3;
+  string reason = 4;
+}
+
+message GlobalDecisionMessage {
+  string transaction_id = 1;
+  string coordinator_id = 2;
+  bool commit = 3;
+  string reason = 4;
+}
+
+message DecisionAck {
+  string transaction_id = 1;
+  string participant_id = 2;
+  string status = 3;
+}
+
+message TransactionResult {
+  string transaction_id = 1;
+  bool committed = 2;
+  string summary = 3;
+}
+
+message InternalDecisionRequest {
+  string transaction_id = 1;
+  string coordinator_id = 2;
+  repeated VoteReply votes = 3;
+}
+
+message InternalApplyDecisionRequest {
+  string transaction_id = 1;
+  string participant_id = 2;
+  bool commit = 3;
+  string reason = 4;
+  string operation = 5;
+}
+
+service TwoPCParticipant {
+  rpc VoteRequest(VoteRequestMessage) returns (VoteReply);
+  rpc GlobalDecision(GlobalDecisionMessage) returns (DecisionAck);
+}
+
+service TwoPCCoordinator {
+  rpc StartTransaction(TransactionRequest) returns (TransactionResult);
+}
+
+service TwoPCPhase {
+  rpc MakeDecision(InternalDecisionRequest) returns (GlobalDecisionMessage);
+  rpc ApplyDecision(InternalApplyDecisionRequest) returns (DecisionAck);
+}

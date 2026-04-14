@@ -1,0 +1,223 @@
+services:
+  airdata:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.airdata
+    profiles: ["distributed"]
+
+  battery:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.battery
+    profiles: ["distributed"]
+
+  engine:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.engine
+    profiles: ["distributed"]
+
+  gps:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.gps
+    profiles: ["distributed"]
+
+  imu:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.imu
+    profiles: ["distributed"]
+
+  aggregation:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.aggregation
+    depends_on:
+      - airdata
+      - battery
+      - engine
+      - gps
+      - imu
+    ports:
+      - "50051:50051"
+    profiles: ["distributed"]
+
+  analysis:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.analysis
+    depends_on:
+      - aggregation
+    ports:
+      - "50052:50052"
+    profiles: ["distributed"]
+
+  update:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.update
+    depends_on:
+      - analysis
+    ports:
+      - "50054:50054"
+    profiles: ["distributed"]
+
+  server:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.server
+    depends_on:
+      - update
+    ports:
+      - "50053:50053"
+    profiles: ["distributed"]
+
+  # -------- MONOLITH VERSION --------
+  monolith:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.monolith
+    ports:
+      - "50053:50053"
+    profiles: ["monolith"]
+
+  client:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.client
+    stdin_open: true
+    tty: true
+
+  # -------- 2PC VERSION --------
+  twopc-coordinator:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.twopc
+    environment:
+      NODE_ID: coordinator
+      ROLE: coordinator
+      PORT: 51000
+      PARTICIPANTS: p1=twopc-p1:51001,p2=twopc-p2:51002,p3=twopc-p3:51003,p4=twopc-p4:51004
+    ports:
+      - "51000:51000"
+    profiles: ["twopc"]
+
+  twopc-p1:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.twopc
+    environment:
+      NODE_ID: p1
+      ROLE: participant
+      PORT: 51001
+      VOTE_COMMIT: "true"
+    profiles: ["twopc"]
+
+  twopc-p2:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.twopc
+    environment:
+      NODE_ID: p2
+      ROLE: participant
+      PORT: 51002
+      VOTE_COMMIT: "true"
+    profiles: ["twopc"]
+
+  twopc-p3:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.twopc
+    environment:
+      NODE_ID: p3
+      ROLE: participant
+      PORT: 51003
+      VOTE_COMMIT: "true"
+    profiles: ["twopc"]
+
+  twopc-p4:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.twopc
+    environment:
+      NODE_ID: p4
+      ROLE: participant
+      PORT: 51004
+      VOTE_COMMIT: "true"
+    profiles: ["twopc"]
+
+  twopc-client:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.twopc_client
+    profiles: ["twopc"]
+
+  # -------- RAFT VERSION --------
+  raft1:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.raft
+    environment:
+      NODE_ID: raft1
+      PORT: 52001
+      CLUSTER: raft1=raft1:52001,raft2=raft2:52002,raft3=raft3:52003,raft4=raft4:52004,raft5=raft5:52005
+    ports:
+      - "52001:52001"
+    profiles: ["raft"]
+
+  raft2:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.raft
+    environment:
+      NODE_ID: raft2
+      PORT: 52002
+      CLUSTER: raft1=raft1:52001,raft2=raft2:52002,raft3=raft3:52003,raft4=raft4:52004,raft5=raft5:52005
+    ports:
+      - "52002:52002"
+    profiles: ["raft"]
+
+  raft3:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.raft
+    environment:
+      NODE_ID: raft3
+      PORT: 52003
+      CLUSTER: raft1=raft1:52001,raft2=raft2:52002,raft3=raft3:52003,raft4=raft4:52004,raft5=raft5:52005
+    ports:
+      - "52003:52003"
+    profiles: ["raft"]
+
+  raft4:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.raft
+    environment:
+      NODE_ID: raft4
+      PORT: 52004
+      CLUSTER: raft1=raft1:52001,raft2=raft2:52002,raft3=raft3:52003,raft4=raft4:52004,raft5=raft5:52005
+    ports:
+      - "52004:52004"
+    profiles: ["raft"]
+
+  raft5:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.raft
+    environment:
+      NODE_ID: raft5
+      PORT: 52005
+      CLUSTER: raft1=raft1:52001,raft2=raft2:52002,raft3=raft3:52003,raft4=raft4:52004,raft5=raft5:52005
+    ports:
+      - "52005:52005"
+    profiles: ["raft"]
+
+  raft-client:
+    build:
+      context: .
+      dockerfile: Dockerfiles/Dockerfile.raft_client
+    environment:
+      CLUSTER: raft1=raft1:52001,raft2=raft2:52002,raft3=raft3:52003,raft4=raft4:52004,raft5=raft5:52005
+    profiles: ["raft"]

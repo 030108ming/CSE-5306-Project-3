@@ -1,0 +1,47 @@
+syntax = "proto3";
+
+package drone;
+
+message Empty {}
+
+message Telemetry {
+  string signal = 1;
+  double value = 2;
+  bool alert = 3;
+  string message = 4;
+  int64 ts_ms = 5;
+}
+
+message Command {
+  string text = 1;
+}
+
+message Reply {
+  string text = 1;
+}
+
+// Sensor nodes
+service Sensor {
+  rpc GetTelemetry(Empty) returns (Telemetry);
+}
+
+// Aggregation node
+service Aggregation {
+  rpc StreamTelemetry(Empty) returns (stream Telemetry);
+}
+
+// Analysis node
+service Analysis {
+  rpc StreamAnalyzed(Empty) returns (stream Telemetry);
+}
+
+// Update node
+service Update {
+  rpc StreamUpdate(Empty) returns (stream Telemetry);
+  rpc SendCommand(Command) returns (Reply);
+}
+
+// Server node
+service Server {
+  rpc SendCommand(Command) returns (Reply);
+}

@@ -1,0 +1,13 @@
+FROM python:3.11-slim
+
+WORKDIR /app
+
+RUN pip install --no-cache-dir grpcio grpcio-tools
+
+COPY src/ ./src/
+COPY twopc.proto .
+RUN python -m grpc_tools.protoc -I. --python_out=./src --grpc_python_out=./src twopc.proto
+
+WORKDIR /app/src
+
+CMD ["python", "twopc_node.py"]

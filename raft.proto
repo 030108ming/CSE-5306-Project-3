@@ -1,0 +1,63 @@
+syntax = "proto3";
+
+package raft;
+
+message RequestVoteRequest {
+  int32 term = 1;
+  string candidate_id = 2;
+}
+
+message RequestVoteReply {
+  int32 term = 1;
+  bool vote_granted = 2;
+  string voter_id = 3;
+}
+
+message LogEntry {
+  int32 index = 1;
+  int32 term = 2;
+  string operation = 3;
+}
+
+message AppendEntriesRequest {
+  int32 term = 1;
+  string leader_id = 2;
+  repeated LogEntry entries = 3;
+  int32 commit_index = 4;
+}
+
+message AppendEntriesReply {
+  int32 term = 1;
+  bool success = 2;
+  string follower_id = 3;
+  int32 match_index = 4;
+}
+
+message ClientCommandRequest {
+  string operation = 1;
+}
+
+message ClientCommandReply {
+  bool success = 1;
+  string leader_id = 2;
+  string result = 3;
+}
+
+message StatusRequest {}
+
+message StatusReply {
+  string node_id = 1;
+  string state = 2;
+  int32 term = 3;
+  string leader_id = 4;
+  int32 log_length = 5;
+  int32 commit_index = 6;
+  repeated string state_machine = 7;
+}
+
+service Raft {
+  rpc RequestVote(RequestVoteRequest) returns (RequestVoteReply);
+  rpc AppendEntries(AppendEntriesRequest) returns (AppendEntriesReply);
+  rpc ClientCommand(ClientCommandRequest) returns (ClientCommandReply);
+  rpc GetStatus(StatusRequest) returns (StatusReply);
+}
