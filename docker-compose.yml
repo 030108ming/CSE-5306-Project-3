@@ -111,7 +111,7 @@ services:
       NODE_ID: p1
       ROLE: participant
       PORT: 51001
-      VOTE_COMMIT: "true"
+      VOTE_COMMIT: "ture"
     profiles: ["twopc"]
 
   twopc-p2:

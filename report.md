@@ -1,7 +1,7 @@
 # CSE 5306 Project 3 Report — Consensus Algorithms: 2PC and Raft
 
 **Course:** CSE 5306 — Distributed Systems  
-**GitHub:** *([insert your GitHub link here](https://github.com/030108ming/CSE-5306-Project-3))*
+**GitHub:** *(https://github.com/030108ming/CSE-5306-Project-3)*
 
 ---
 
@@ -64,7 +64,7 @@ Phase voting of Node p1 sends RPC VoteRequest to Phase voting of Node coordinato
 
 ### Screenshot 1 — Successful Commit (all participants vote YES)
 
-*(Insert terminal screenshot here)*
+*(![alt text](image.png))*
 
 Expected output:
 - Coordinator prints `VoteRequest` to each participant
@@ -74,7 +74,7 @@ Expected output:
 
 ### Screenshot 2 — Abort (one participant votes NO)
 
-*(Insert terminal screenshot here)*
+*(![alt text](image-1.png))*
 
 Expected output:
 - Coordinator prints `VoteRequest` to each participant
@@ -119,7 +119,7 @@ Node raft2 runs RPC RequestVote called by Node raft1
 
 ### Screenshot 3 — Leader Election
 
-*(Insert terminal screenshot here)*
+*(![alt text](image-2.png),![alt text](image-3.png))*
 
 Expected output:
 - Multiple nodes showing `Node X starts election for term N`
@@ -153,28 +153,14 @@ Expected output:
 
 ### Screenshot 4 — Log Replication
 
-*(Insert terminal screenshot here)*
+*(![alt text](image-5.png))*
 
-Expected output:
-- Non-leader node receives command and forwards to leader
-- Leader prints `Leader raftX appended {index:1, term:1, operation:...}`
-- Leader prints `AppendEntries` RPC logs to each follower
-- Leader prints `committed index 1 with 4 ACKs`
-- Status shows all nodes with matching `log_length` and `commit_index`
+
 
 ### Screenshot 5 — Full Status Output
 
-*(Insert `raft_client.py status` terminal screenshot here)*
+*(![alt text](image-6.png))*
 
-Expected output:
-```
-raft1: state=leader term=2 leader=raft1 log=3 commit=3
-  applied index=1 term=2 op=set altitude=1000
-  applied index=2 term=2 op=set speed=50
-  applied index=3 term=2 op=set mode=auto
-raft2: state=follower term=2 leader=raft1 log=3 commit=3
-  ...
-```
 
 ---
 
@@ -188,7 +174,7 @@ Stop the current leader.  The 4 remaining nodes hold an election and a new leade
 
 **Demonstrates:** Raft's availability under leader crash.  The cluster remains operational as long as a majority (3 of 5) of nodes are alive.
 
-*(Insert screenshot)*
+*(![alt text](image-7.png))*
 
 ---
 
@@ -198,7 +184,7 @@ Stop 1 follower.  Send a command.
 
 **Demonstrates:** With 4 alive nodes, the leader still gets 3 ACKs (majority) and commits.
 
-*(Insert screenshot)*
+*(![alt text](image-8.png))*
 
 ---
 
@@ -208,7 +194,7 @@ Stop 2 followers.  Send a command.
 
 **Demonstrates:** 3 alive nodes = exactly the majority threshold.  Cluster is still functional.
 
-*(Insert screenshot)*
+*(![alt text](image-9.png))*
 
 ---
 
@@ -218,7 +204,7 @@ Stop 3 of 5 nodes.  Send a command.
 
 **Demonstrates:** With only 2 alive nodes, no majority is reachable.  The command fails.  This is Raft's availability limit — it sacrifices availability to preserve safety (no incorrect commits).
 
-*(Insert screenshot)*
+*(![alt text](image-10.png))*
 
 ---
 
@@ -228,7 +214,7 @@ Stop one follower, commit an entry, then restart the follower.
 
 **Demonstrates:** The rejoined node receives the leader's full log on the next heartbeat and catches up to the same state as the rest of the cluster.
 
-*(Insert screenshot — show the restarted node's log_length matching the others)*
+*(![alt text](image-11.png))*
 
 ---
 
@@ -238,7 +224,7 @@ Start 4 nodes, commit 2 entries, then start the 5th node which has an empty log.
 
 **Demonstrates:** The assignment specifically lists "a new node entering the system" as a test case.  Raft handles this with no special protocol — the first heartbeat the new node receives contains the full log, and it replicates immediately.
 
-*(Insert screenshot — show raft5's log catching up after joining)*
+*(![alt text](image-12.png),![alt text](image-13.png))*
 
 ---
 
@@ -248,7 +234,7 @@ Send 5 commands back-to-back without delay.
 
 **Demonstrates:** The leader correctly serializes entries, log indices increment monotonically, and no entries are lost or duplicated under rapid load.
 
-*(Insert screenshot — show all 5 entries in all nodes' state machine)*
+*(![alt text](image-14.png))*
 
 ---
 
@@ -258,7 +244,7 @@ Commit a baseline entry, then fire a second command and immediately kill the lea
 
 **Demonstrates:** Raft's safety guarantee — only entries replicated to a majority survive a leadership change.  The baseline (which was committed) always survives.  The in-flight entry may be lost if it did not reach a majority before the crash.  The cluster recovers and accepts new commands from the new leader.
 
-*(Insert screenshot — show baseline entry present, new leader elected, recovery command committing)*
+*(![alt text](image-15.png))*
 
 ---
 

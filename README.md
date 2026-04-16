@@ -5,7 +5,7 @@
 - Chenchuhui Hu (1002341126)
 
 **Base implementation:** Project 2 — Distributed Drone Telemetry System (Python + gRPC + Docker Compose).
-**GitHub:** *([insert your GitHub link here](https://github.com/030108ming/CSE-5306-Project-3))*
+**GitHub:** *(https://github.com/030108ming/CSE-5306-Project-3)*
 ---
 
 ## Overview 
