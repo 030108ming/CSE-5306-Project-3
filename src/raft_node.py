@@ -111,8 +111,14 @@ class RaftNode(raft_pb2_grpc.RaftServicer):
             if request.term > self.current_term:
                 self._become_follower(request.term)
 
+            my_last_log_index = len(self.log)
+            my_last_log_term = self.log[-1]["term"] if self.log else 0
+            candidate_log_ok = (
+                request.last_log_term > my_last_log_term
+                or (request.last_log_term == my_last_log_term and request.last_log_index >= my_last_log_index)
+            )
             vote_available = self.voted_for in ("", request.candidate_id)
-            vote_granted = vote_available and request.term == self.current_term
+            vote_granted = vote_available and request.term == self.current_term and candidate_log_ok
             if vote_granted:
                 self.voted_for = request.candidate_id
                 self._reset_election_timeout()
@@ -264,6 +270,8 @@ class RaftNode(raft_pb2_grpc.RaftServicer):
             self.voted_for = NODE_ID
             self.leader_id = ""
             self._reset_election_timeout()
+            last_log_index = len(self.log)
+            last_log_term = self.log[-1]["term"] if self.log else 0
             print(f"Node {NODE_ID} starts election for term {term}", flush=True)
 
         votes = 1
@@ -271,7 +279,12 @@ class RaftNode(raft_pb2_grpc.RaftServicer):
             try:
                 rpc_client_log(NODE_ID, "RequestVote", peer_id)
                 reply = stub.RequestVote(
-                    raft_pb2.RequestVoteRequest(term=term, candidate_id=NODE_ID),
+                    raft_pb2.RequestVoteRequest(
+                        term=term,
+                        candidate_id=NODE_ID,
+                        last_log_index=last_log_index,
+                        last_log_term=last_log_term,
+                    ),
                     timeout=2,
                 )
             except grpc.RpcError:
