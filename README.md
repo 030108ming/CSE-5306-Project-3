@@ -132,6 +132,12 @@ docker compose --profile raft run --rm raft-client python raft_client.py cmd "se
 docker compose logs raft1 raft2 raft3 raft4 raft5
 ```
 
+
+### turn down the container
+```bash
+docker compose --profile raft down -v --remove-orphans
+```
+
 ---
 
 ## Q5 — Raft Failure Tests
